@@ -16,7 +16,7 @@ namespace FunctionalProgramming.Tests.MonadTests
         }
 
         [TestCase]
-        public void TestMaybeNullable_NonNullValueIsSomething()
+        public void TestMaybeNullable_NotNullValueIsSomething()
         {
             int? value = 1;
             var result = value.ToMaybe();
@@ -45,7 +45,7 @@ namespace FunctionalProgramming.Tests.MonadTests
         }
 
         [TestCase]
-        public void TestMaybeString_NonNullOrWhitespaceStringIsSomething()
+        public void TestMaybeString_NotNullOrWhitespaceStringIsSomething()
         {
             var result = "hello".ToMaybe();
             Assert.IsFalse(result.IsEmpty);
