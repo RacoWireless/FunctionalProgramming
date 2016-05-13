@@ -3,7 +3,6 @@ using FunctionalProgramming.Monad.Outlaws;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FunctionalProgramming.Helpers;
 
 namespace FunctionalProgramming.Monad
 {
@@ -20,12 +19,33 @@ namespace FunctionalProgramming.Monad
     {
         public static IMaybe<TValue> Pure<TValue>(TValue value) where TValue : struct
         {
-            return new Just<TValue>(value);    
-        } 
+            return new Just<TValue>(value);
+        }
 
         public static IMaybe<TValue> ToMaybe<TValue>(this TValue value)
         {
             return value == null ? Nothing<TValue>() : new Just<TValue>(value);
+        }
+
+        /// <summary>
+        /// Convert nullable value type to maybe of value type
+        /// </summary>
+        /// <typeparam name="TValue">value type</typeparam>
+        /// <param name="value">nullable value</param>
+        /// <returns>nothing if value is null</returns>
+        public static IMaybe<TValue> ToMaybe<TValue>(this TValue? value) where TValue : struct
+        {
+            return value.HasValue ? value.Value.ToMaybe() : Nothing<TValue>();
+        }
+
+        /// <summary>
+        /// Convert string value to maybe of string
+        /// </summary>
+        /// <param name="value">string value</param>
+        /// <returns>nothing if value is null or white space</returns>
+        public static IMaybe<string> ToMaybe(this string value)
+        {
+            return string.IsNullOrWhiteSpace(value) ? Nothing<string>() : new Just<string>(value);
         }
 
         public static IMaybe<TValue> Nothing<TValue>()
@@ -194,7 +214,6 @@ namespace FunctionalProgramming.Monad
 
         private static readonly Io<Unit> IoUnit = Io.Apply(() => Unit.Only);
 
-
         /// <summary>
         /// Helper that, given a potential value, will perform a side-effect if that value is not present
         /// </summary>
@@ -228,7 +247,6 @@ namespace FunctionalProgramming.Monad
         public static IMaybe<T2> Apply<T1, T2>(this IMaybe<Func<T1, T2>> fa, IMaybe<T1> ma)
         {
             return fa.SelectMany(ma.Select);
-        } 
+        }
     }
-
 }

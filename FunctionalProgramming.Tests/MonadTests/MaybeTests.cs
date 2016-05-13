@@ -1,17 +1,60 @@
-﻿using System;
-using System.Linq;
-using FunctionalProgramming.Monad;
+﻿using FunctionalProgramming.Monad;
 using NUnit.Framework;
+using System;
+using System.Linq;
 
 namespace FunctionalProgramming.Tests.MonadTests
 {
     [TestFixture]
     public class MaybeTests
     {
+        [TestCase]
+        public void TestMaybeNullable_NullValueIsNothing()
+        {
+            var result = default(int?).ToMaybe();
+            Assert.IsTrue(result.IsEmpty);
+        }
+
+        [TestCase]
+        public void TestMaybeNullable_NotNullValueIsSomething()
+        {
+            int? value = 1;
+            var result = value.ToMaybe();
+            Assert.IsFalse(result.IsEmpty);
+        }
+
+        [TestCase]
+        public void TestMaybeString_EmptyStringIsNothing()
+        {
+            var result = string.Empty.ToMaybe();
+            Assert.IsTrue(result.IsEmpty);
+        }
+
+        [TestCase]
+        public void TestMaybeString_NullStringIsNothing()
+        {
+            var result = default(string).ToMaybe();
+            Assert.IsTrue(result.IsEmpty);
+        }
+
+        [TestCase]
+        public void TestMaybeString_WhitespaceStringIsNothing()
+        {
+            var result = " ".ToMaybe();
+            Assert.IsTrue(result.IsEmpty);
+        }
+
+        [TestCase]
+        public void TestMaybeString_NotNullOrWhitespaceStringIsSomething()
+        {
+            var result = "hello".ToMaybe();
+            Assert.IsFalse(result.IsEmpty);
+        }
+
         private static IMaybe<int> SafeDivide(int i)
         {
-            return i%2 == 0
-                ? (i/2).ToMaybe()
+            return i % 2 == 0
+                ? (i / 2).ToMaybe()
                 : Maybe.Nothing<int>();
         }
 
@@ -21,14 +64,14 @@ namespace FunctionalProgramming.Tests.MonadTests
             var result = 5.ToMaybe().Select(n => n == 5).GetOrElse(() => false);
             Assert.IsTrue(result);
         }
-            
+
         [Test]
         public void TestSelectManyNothingResult()
         {
             var expected = Maybe.Nothing<int>();
             var result = from a in SafeDivide(10)
-                from b in SafeDivide(a)
-                select b;
+                         from b in SafeDivide(a)
+                         select b;
 
             Assert.AreEqual(expected, result);
         }
@@ -71,7 +114,7 @@ namespace FunctionalProgramming.Tests.MonadTests
         [Test]
         public void TestKeepSome()
         {
-            var expected = new[] {1, 2, 3, 4};
+            var expected = new[] { 1, 2, 3, 4 };
             var test = new[]
             {
                 1.ToMaybe()
